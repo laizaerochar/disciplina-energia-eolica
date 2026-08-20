@@ -1,42 +1,7 @@
 """
 TAREFA 3 - energia eolica
 velocidade do vento: variacao anual, sazonal e perfil vertical (2 alturas)
-
-fonte dos dados: INMET, estacoes de Fortaleza(A305), Barreiras(A402) e
-Picos(A343), medicoes horarias de 2016-01-01 a 2025-12-31 (10 anos).
-coluna usada: "VENTO, VELOCIDADE HORARIA(m/s)"
-
-3.1) Velocidade media anual (Eq. 8 do slide) das 3 localidades, mesmo grafico
-3.2) Variacao sazonal (media mensal) das 3 localidades, mesmo periodo, mesmo grafico
-
-NOTA SOBRE QUALIDADE DOS DADOS (Barreiras/A402):
-    A estacao de Barreiras esta com "Situacao: Pane" no cabecalho do CSV.
-    A partir de 2020 a maioria das leituras de velocidade do vento fica
-    zerada (~95% dos registros = 0.0 m/s em 2023), o que e uma falha real
-    de sensor, e nao um dado ausente (NaN) que a interpolacao resolveria.
-    Por isso, para as tarefas 3.1 e 3.2, adota-se o PERIODO COMUM E
-    CONFIAVEL das 3 estacoes: 2016-2019 (4 anos), em vez dos 10 anos
-    originalmente disponiveis no arquivo, e dos 2 anos solicitados no enunciado, tendo em vista que a manipulação dos dados teve uma interferencia dada a falha nos dados postados pelo INMET, e uma vez que o tempo foi limitado, optei por não procurar uma 4 localidade para substituição. A tarefa 3.3 (perfil vertical em
-    Picos) nao e afetada, pois usa apenas a estacao de Picos (Operante).
-3.3) Picos: variacao da velocidade media horaria ao longo do dia, para 2 alturas
-     diferentes, obtidas por extrapolacao via LEI DE HELLMANN (perfil de vento
-     exponencial):
-
-        v2 = v1 * (h2 / h1) ^ alfa
-
-     h1 = altura de referencia do anemometro da estacao (10 m, padrao INMET)
-     h2 = altura de interesse (ex.: altura de cubo de aerogerador)
-     alfa = coeficiente de Hellmann (0.14 -> terreno aberto, valor padrao
-            adotado na ausencia de medicao de rugosidade do local)
-OBS; essa lei representa uma EXTRAPOLAÇÃO, novamente, não se tinha esse segundo dado de altura, e para modelar esses dados a IA sugeriu a utilizacao dessa lei.
-
-Saidas (salvas em ../resultados/tarefa3/):
-    velocidade_media_anual.png
-    velocidade_media_anual.csv
-    variacao_sazonal.png
-    variacao_sazonal.csv
-    perfil_vertical_picos.png
-    perfil_vertical_picos.csv
+refeita c nova base de banco de dados NASA POWER
 """
 import os
 import numpy as np
