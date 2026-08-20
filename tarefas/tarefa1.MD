@@ -125,3 +125,4 @@ Circulações locais de pequena escala, cruciais para o estudo de energia eólic
   * Dia: Terra mais quente que a água $\rightarrow$ vento flui do mar para a terra.
   * Noite: Terra esfria rápido $\rightarrow$ vento inverte, da terra para o mar.
 * **Ventos de Vales e Montanhas:** Durante o dia, o ar aquece e sobe a encosta; à noite, o processo se inverte e o ar frio (mais denso) desce para o vale.
+
