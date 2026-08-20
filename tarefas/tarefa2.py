@@ -19,86 +19,80 @@ saidas
     grafico_massa_especifica_3d.png -> visao geral da equacao (z, T, ro)
     grafico_picos_232m.png        -> ro x T para z = 232.91 m, destacando T = 25 C, que é a regiao que eu escolhi para o decorrer da disciplina, picos.
 """
-
 import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-# config d caminhos 
+# Configuração de caminhos baseados na estrutura do seu projeto
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(BASE_DIR, "resultados", "tarefa2")
 os.makedirs(OUT_DIR, exist_ok=True)
 
-# eq (7) do slide
-def massa_especifica(z, T):
-    return 353.4 * (1 - z / 45271) ** 5.2624 / (273.15 + T)
+# Aplica um tema visual limpo e profissional
+sns.set_theme(style="whitegrid", palette="deep")
 
-# 1) TABELA - replica a do slide (z de 0 a 1000, passo 100) e (T de -5 a 30, passo 5)
-altitudes = np.arange(0, 1001, 100)      # 0, 100, ..., 1000 m
-temperaturas = np.arange(-5, 31, 5)      # -5, 0, 5, ..., 30 C
+def calcular_rho(z, T):
+    return (353.4 * (1 - (z / 45271))**5.2624) / (273.15 + T)
 
-tabela = pd.DataFrame(
-    index=altitudes,
-    columns=[f"{t}C" for t in temperaturas],
-    dtype=float,
-)
+# --- 1. Tabela e Gráfico Geral ---
+# Limites de acordo com a Tabela 2.1 do livro
+altitudes = np.arange(0, 1001, 100)
+temperaturas = np.arange(-5, 31, 5)
 
-for z in altitudes:
-    for T in temperaturas:
-        tabela.loc[z, f"{T}C"] = round(massa_especifica(z, T), 3)
+dados = {f"{T}°C": [calcular_rho(z, T) for z in altitudes] for T in temperaturas}
+tabela_rho = pd.DataFrame(dados, index=altitudes)
+tabela_rho.index.name = "Altitude [m]"
 
-tabela.index.name = "Altitude [m]"
+# SALVANDO A TABELA
+caminho_tabela = os.path.join(OUT_DIR, 'tarefa2_tabela_massa_especifica.csv')
+tabela_rho.round(3).to_csv(caminho_tabela, sep=";", decimal=",")
+print(f"Tabela da Tarefa 2 salva em: {caminho_tabela}")
 
-caminho_tabela = os.path.join(OUT_DIR, "tabela_massa_especifica.csv")
-tabela.to_csv(caminho_tabela, sep=";", decimal=",")
-print(f"Tabela salva em: {caminho_tabela}")
-print(tabela)
+# PLOTANDO O GRÁFICO GERAL
+plt.figure(figsize=(10, 6))
+for T in temperaturas:
+    sns.lineplot(x=tabela_rho.index, y=tabela_rho[f"{T}°C"], label=f"{T}°C", marker='o')
 
-
-# grafico 3d p visualizacao geral da equacao, com heatmap de cores tb 
-Z, Tg = np.meshgrid(altitudes, temperaturas)
-ro = massa_especifica(Z, Tg)
-
-fig = plt.figure(figsize=(9, 6))
-ax = fig.add_subplot(111, projection="3d")
-ax.plot_surface(Z, Tg, ro, cmap="viridis", edgecolor="none", alpha=0.9)
-ax.set_xlabel("Altitude z [m]")
-ax.set_ylabel("Temperatura T [C]")
-ax.set_zlabel("Massa especifica ro [kg/m3]")
-ax.set_title("Massa especifica do ar - Equacao (7)")
+plt.title('Massa Específica do Ar em função da Altitude e Temperatura', fontsize=14, weight='bold', pad=15)
+plt.xlabel('Altitude (m)', fontsize=12)
+plt.ylabel('Massa Específica do Ar (kg/m³)', fontsize=12)
+plt.legend(title="Temperatura", bbox_to_anchor=(1.05, 1), loc='upper left', frameon=False)
 plt.tight_layout()
-caminho_3d = os.path.join(OUT_DIR, "grafico_massa_especifica_3d.png")
-plt.savefig(caminho_3d, dpi=150)
+
+# SALVANDO O GRÁFICO GERAL
+caminho_geral = os.path.join(OUT_DIR, 'tarefa2_grafico_geral.png')
+plt.savefig(caminho_geral, dpi=300)
 plt.close()
-print(f"Grafico 3D salvo em: {caminho_3d}")
 
-# grafico especifico de picos 
-z_picos = 232.91
-T_range = np.linspace(-5, 30, 200)
-ro_picos = massa_especifica(z_picos, T_range)
+# --- 2. Gráfico Específico para Picos (NASA) ---
+# z = 406.51m extraído do cabeçalho do CSV MERRA-2
+z_picos = 406.51 
+t_picos = 25
 
-T_destaque = 25
-ro_destaque = massa_especifica(z_picos, T_destaque)
+temps_picos = np.linspace(-5, 35, 100)
+rho_picos_var = [calcular_rho(z_picos, t) for t in temps_picos]
+rho_ponto_exato = calcular_rho(z_picos, t_picos)
 
 plt.figure(figsize=(8, 5))
-plt.plot(T_range, ro_picos, color="darkorange", linewidth=2,
-         label=f"z = {z_picos} m (Picos-PI)")
-plt.scatter([T_destaque], [ro_destaque], color="red", zorder=5,
-            label=f"T = {T_destaque} C -> ro = {ro_destaque:.4f} kg/m3")
-plt.annotate(f"({T_destaque}C, {ro_destaque:.4f})",
-             xy=(T_destaque, ro_destaque),
-             xytext=(T_destaque + 2, ro_destaque + 0.01),
-             arrowprops=dict(arrowstyle="->", color="black"))
-plt.xlabel("Temperatura ambiente T [C]")
-plt.ylabel("Massa especifica do ar ro [kg/m3]")
-plt.title("Massa especifica do ar - Picos/PI (Altitude = 232.91 m)")
-plt.grid(alpha=0.3)
-plt.legend()
-plt.tight_layout()
-caminho_picos = os.path.join(OUT_DIR, "grafico_picos_232m.png")
-plt.savefig(caminho_picos, dpi=150)
-plt.close()
-print(f"grafico de picos salvo em: {caminho_picos}")
+sns.lineplot(x=temps_picos, y=rho_picos_var, color='#2c3e50', label=f'Altitude Picos NASA ({z_picos} m)', linewidth=2)
+plt.plot(t_picos, rho_ponto_exato, marker='o', color='#e74c3c', markersize=8, label=f'Ponto {t_picos}°C: {rho_ponto_exato:.4f} kg/m³')
 
-print(f"\nValor pedido no enunciado -> ro(z=232.91m, T=25C) = {ro_destaque:.4f} kg/m3")
+# Pequena anotação para destacar o valor no gráfico
+plt.annotate(f"({t_picos}°C, {rho_ponto_exato:.4f})",
+             xy=(t_picos, rho_ponto_exato),
+             xytext=(t_picos + 2, rho_ponto_exato + 0.005),
+             arrowprops=dict(arrowstyle="->", color="black"))
+
+plt.title('Variação da Massa Específica - Picos/PI (MERRA-2)', fontsize=14, weight='bold', pad=15)
+plt.xlabel('Temperatura (°C)', fontsize=12)
+plt.ylabel('Massa Específica do Ar (kg/m³)', fontsize=12)
+plt.legend(frameon=True, shadow=True)
+plt.tight_layout()
+
+caminho_picos = os.path.join(OUT_DIR, 'tarefa2_grafico_picos.png')
+plt.savefig(caminho_picos, dpi=300)
+plt.close()
+
+print(f"Gráficos da Tarefa 2 salvos na pasta: {OUT_DIR}")

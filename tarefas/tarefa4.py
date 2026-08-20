@@ -19,34 +19,30 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# ----------------------------------------------------------------------
-# Configuracao
-# ----------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "banco-de-dados")
 OUT_DIR = os.path.join(BASE_DIR, "resultados", "tarefa4")
 os.makedirs(OUT_DIR, exist_ok=True)
 
 CAMINHO_PICOS = os.path.join(DATA_DIR, "picos.csv")
-COL_VEL = "VENTO, VELOCIDADE HORARIA(m/s)"
+
+# Usando a velocidade a 50m (WS50M) para o histograma de potencial eolico.
+# Se quiser replicar estritamente o relatorio antigo, mude para "WS10M".
+COL_VEL = "WS50M" 
 
 ANOS = [2019, 2024]
 
+df = pd.read_csv(CAMINHO_PICOS, skiprows=11, na_values=[-999.0, -999])
 
-# ----------------------------------------------------------------------
-# Leitura dos dados de Picos
-# ----------------------------------------------------------------------
-df = pd.read_csv(CAMINHO_PICOS, sep=";", skiprows=9, encoding="utf-8")
-df["Data Medicao"] = pd.to_datetime(df["Data Medicao"])
-df["Ano"] = df["Data Medicao"].dt.year
+# Cria o indice temporal a partir das colunas da NASA para extrair o ano
+df["datetime"] = pd.to_datetime({
+    "year": df["YEAR"],
+    "month": df["MO"],
+    "day": df["DY"],
+    "hour": df["HR"]
+})
+df["Ano"] = df["datetime"].dt.year
 
-# remove apenas os registros sem leitura (NaN); nao ha problema de sensor em Picos
-df = df.dropna(subset=[COL_VEL])
-
-
-# ----------------------------------------------------------------------
-# Montagem das faixas de 1 m/s (0-1, 1-2, ..., ate cobrir o maximo observado)
-# ----------------------------------------------------------------------
 vmax_global = df[df["Ano"].isin(ANOS)][COL_VEL].max()
 limite_superior = int(np.ceil(vmax_global)) + 1
 bins = np.arange(0, limite_superior + 1, 1)
@@ -69,7 +65,8 @@ def montar_tabela_distribuicao(velocidades):
 
 tabelas = {}
 for ano in ANOS:
-    velocidades_ano = df.loc[df["Ano"] == ano, COL_VEL]
+    # Filtra os dados do ano especifico e remove possiveis falhas (NaN) da NASA
+    velocidades_ano = df.loc[df["Ano"] == ano, COL_VEL].dropna()
     tabela = montar_tabela_distribuicao(velocidades_ano)
     tabelas[ano] = tabela
 
@@ -79,9 +76,6 @@ for ano in ANOS:
     print(tabela.to_string(index=False))
 
 
-# ----------------------------------------------------------------------
-# Tabela comparativa (2019 x 2024 lado a lado)
-# ----------------------------------------------------------------------
 tabela_comparativa = pd.DataFrame({"Velocidade do Vento (m/s)": labels})
 for ano in ANOS:
     tabela_comparativa[f"Ocorrencias {ano}"] = tabelas[ano]["N. de Ocorrencias"].values
@@ -92,29 +86,30 @@ tabela_comparativa.to_csv(caminho_comp, sep=";", decimal=",", index=False)
 print("\nTabela comparativa salva em:", caminho_comp)
 
 
-# ----------------------------------------------------------------------
-# Histograma comparativo (barras lado a lado, 2019 x 2024)
-# ----------------------------------------------------------------------
 x = np.arange(len(labels))
-largura = 0.4
+largura = 0.85 # Barras mais largas já que os graficos nao estao mais dividindo espaco
 
-plt.figure(figsize=(12, 6))
-plt.bar(x - largura / 2, tabelas[ANOS[0]]["Frequencia Relativa (%)"],
-        width=largura, label=str(ANOS[0]), color="steelblue", edgecolor="black")
-plt.bar(x + largura / 2, tabelas[ANOS[1]]["Frequencia Relativa (%)"],
-        width=largura, label=str(ANOS[1]), color="darkorange", edgecolor="black")
+# Dicionario de cores para manter o padrao visual anterior
+cores = {2019: "steelblue", 2024: "darkorange"}
 
-plt.xticks(x, labels, rotation=45)
-plt.xlabel("Velocidade do Vento (m/s)")
-plt.ylabel("Frequencia da distribuicao (%)")
-plt.title("Distribuicao de frequencia da velocidade do vento - Picos/PI\n"
-          f"Comparativo {ANOS[0]} x {ANOS[1]}")
-plt.legend()
-plt.grid(axis="y", alpha=0.3)
-plt.tight_layout()
+for ano in ANOS:
+    plt.figure(figsize=(10, 6))
+    
+    # Plota apenas as barras do ano atual no loop
+    plt.bar(x, tabelas[ano]["Frequencia Relativa (%)"],
+            width=largura, color=cores[ano], edgecolor="black")
 
-caminho_hist = os.path.join(OUT_DIR, "histograma_2019_vs_2024.png")
-plt.savefig(caminho_hist, dpi=150)
-plt.close()
-print(f"\nHistograma salvo em: {caminho_hist}")
+    plt.xticks(x, labels, rotation=45)
+    plt.xlabel(f"Velocidade do Vento a 50m (m/s)")
+    plt.ylabel("Frequencia da distribuicao (%)")
+    plt.title(f"Distribuicao de frequencia da velocidade do vento - Picos/PI ({ano})")
+    plt.grid(axis="y", alpha=0.3)
+    plt.tight_layout()
+
+    caminho_hist = os.path.join(OUT_DIR, f"histograma_{ano}.png")
+    plt.savefig(caminho_hist, dpi=150)
+    plt.close()
+    
+    print(f"Histograma isolado de {ano} salvo em: {caminho_hist}")
+
 print(f"\nTodos os resultados da Tarefa 4 foram salvos em: {OUT_DIR}")

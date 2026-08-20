@@ -38,7 +38,6 @@ Saidas (salvas em ../resultados/tarefa3/):
     perfil_vertical_picos.png
     perfil_vertical_picos.csv
 """
-
 import os
 import numpy as np
 import pandas as pd
@@ -56,50 +55,49 @@ ARQUIVOS = {
     "Picos": "picos.csv",
 }
 
-COL_VEL = "VENTO, VELOCIDADE HORARIA(m/s)"
-
 ANO_INICIO, ANO_FIM = 2016, 2019
 
-# funcao de leitura e extrapolacao para o NaN
-def carregar_serie(caminho_csv, ano_inicio=None, ano_fim=None):
-    df = pd.read_csv(caminho_csv, sep=";", skiprows=9, encoding="utf-8")
-    df["Hora Medicao"] = df["Hora Medicao"].astype(str).str.zfill(4)
-    df["datetime"] = pd.to_datetime(
-        df["Data Medicao"] + " " + df["Hora Medicao"].str[:2] + ":00",
-        format="%Y-%m-%d %H:%M",
-    )
+# funcao de leitura atualizada para o padrao NASA POWER
+def carregar_dataframe(caminho_csv, ano_inicio=None, ano_fim=None):
+    # skiprows=11 pula o cabecalho de texto, na_values mapeia os -999 da NASA como falha
+    df = pd.read_csv(caminho_csv, skiprows=11, na_values=[-999.0, -999])
+    
+    # Cria o indice temporal agrupando as 4 colunas da NASA
+    df["datetime"] = pd.to_datetime({
+        "year": df["YEAR"],
+        "month": df["MO"],
+        "day": df["DY"],
+        "hour": df["HR"]
+    })
     df = df.set_index("datetime").sort_index()
-    serie = df[COL_VEL]
+    
+    # Preenche eventuais falhas por interpolacao temporal (raro no MERRA-2, mas boa pratica)
+    df = df.interpolate(method="time", limit_direction="both")
 
+    # Filtro de anos para comparacoes padronizadas
     if ano_inicio is not None and ano_fim is not None:
-        serie = serie[(serie.index.year >= ano_inicio) & (serie.index.year <= ano_fim)]
+        df = df[(df.index.year >= ano_inicio) & (df.index.year <= ano_fim)]
+        
+    return df
 
-    # preenche as falhas (NaN) por interpolacao temporal antes de calcular medias
-    serie = serie.interpolate(method="time", limit_direction="both")
-    return serie
-
-
-# series recortadas ao periodo comum e confiavel (2016-2019), usadas em 3.1 e 3.2
-series = {
-    nome: carregar_serie(os.path.join(DATA_DIR, arq), ANO_INICIO, ANO_FIM)
+# Dicionario armazenando os DataFrames completos do periodo comum
+dataframes = {
+    nome: carregar_dataframe(os.path.join(DATA_DIR, arq), ANO_INICIO, ANO_FIM)
     for nome, arq in ARQUIVOS.items()
 }
 
-# serie completa de Picos (estacao "Operante", sem o problema de Barreiras),
-# usada isoladamente na tarefa 3.3 (perfil vertical / variacao horaria)
-serie_picos_completa = carregar_serie(os.path.join(DATA_DIR, ARQUIVOS["Picos"]))
-
-# 3.1 VELOCIDADE MEDIA ANUAL (Equacao 8: V = (1/n) * soma(vi))
+# DataFrame completo de Picos para a tarefa 3.3 (2016-2025)
+df_picos_completo = carregar_dataframe(os.path.join(DATA_DIR, ARQUIVOS["Picos"]))
 
 tabela_anual = pd.DataFrame({
-    nome: serie.groupby(serie.index.year).mean()
-    for nome, serie in series.items()
+    nome: df["WS10M"].groupby(df.index.year).mean()
+    for nome, df in dataframes.items()
 })
 tabela_anual.index.name = "Ano"
 
 caminho_csv_anual = os.path.join(OUT_DIR, "velocidade_media_anual.csv")
 tabela_anual.round(3).to_csv(caminho_csv_anual, sep=";", decimal=",")
-print("Velocidade media anual [m/s]:")
+print("Velocidade media anual a 10m [m/s]:")
 print(tabela_anual.round(3))
 
 plt.figure(figsize=(9, 5))
@@ -107,8 +105,7 @@ for nome in ARQUIVOS:
     plt.plot(tabela_anual.index, tabela_anual[nome], marker="o", label=nome)
 plt.xlabel("Ano")
 plt.ylabel("Velocidade media do vento [m/s]")
-plt.title(f"Variacao da velocidade media anual do vento ({ANO_INICIO}-{ANO_FIM})\n"
-          f"Periodo restrito ao intervalo confiavel comum (ver nota sobre Barreiras)")
+plt.title(f"Variacao da velocidade media anual do vento a 10m ({ANO_INICIO}-{ANO_FIM})")
 plt.xticks(tabela_anual.index)
 plt.grid(alpha=0.3)
 plt.legend()
@@ -116,17 +113,15 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUT_DIR, "velocidade_media_anual.png"), dpi=150)
 plt.close()
 
-# 3.2 VARIACAO SAZONAL - media mensal, mesmo periodo, 3 localidades
-
 tabela_sazonal = pd.DataFrame({
-    nome: serie.groupby(serie.index.month).mean()
-    for nome, serie in series.items()
+    nome: df["WS10M"].groupby(df.index.month).mean()
+    for nome, df in dataframes.items()
 })
 tabela_sazonal.index.name = "Mes"
 
 caminho_csv_sazonal = os.path.join(OUT_DIR, "variacao_sazonal.csv")
 tabela_sazonal.round(3).to_csv(caminho_csv_sazonal, sep=";", decimal=",")
-print("\nVariacao sazonal (media mensal) [m/s]:")
+print("\nVariacao sazonal a 10m (media mensal) [m/s]:")
 print(tabela_sazonal.round(3))
 
 plt.figure(figsize=(9, 5))
@@ -134,7 +129,7 @@ for nome in ARQUIVOS:
     plt.plot(tabela_sazonal.index, tabela_sazonal[nome], marker="o", label=nome)
 plt.xlabel("Mes")
 plt.ylabel("Velocidade media do vento [m/s]")
-plt.title(f"Variacao sazonal do vento - periodo {ANO_INICIO}-{ANO_FIM}")
+plt.title(f"Variacao sazonal do vento a 10m - periodo {ANO_INICIO}-{ANO_FIM}")
 plt.xticks(range(1, 13))
 plt.grid(alpha=0.3)
 plt.legend()
@@ -142,39 +137,29 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUT_DIR, "variacao_sazonal.png"), dpi=150)
 plt.close()
 
-
-# 3.3 PERFIL VERTICAL (LEI DE HELLMANN) - Picos, 2 alturas, variacao horaria
-
-H1 = 10.0    # altura de referencia (anemometro da estacao INMET) [m]
-H2 = 50.0    # altura de interesse (ex.: altura de cubo do aerogerador) [m]
-ALFA = 0.14  # coeficiente de Hellmann para terreno aberto
-
-serie_picos = serie_picos_completa  # usa toda a serie disponivel de Picos (2016-2025)
-media_horaria = serie_picos.groupby(serie_picos.index.hour).mean()  # v em H1 = 10 m
-
-# Lei de Hellmann: v2 = v1 * (h2/h1)^alfa 
-
-media_horaria_h2 = media_horaria * (H2 / H1) ** ALFA
+# Extraindo as medias diretamente das colunas da NASA
+media_horaria_10m = df_picos_completo["WS10M"].groupby(df_picos_completo.index.hour).mean()
+media_horaria_50m = df_picos_completo["WS50M"].groupby(df_picos_completo.index.hour).mean()
 
 tabela_perfil = pd.DataFrame({
-    f"v a {H1:.0f}m [m/s]": media_horaria,
-    f"v a {H2:.0f}m [m/s]": media_horaria_h2,
+    "v a 10m (real NASA) [m/s]": media_horaria_10m,
+    "v a 50m (real NASA) [m/s]": media_horaria_50m,
 })
 tabela_perfil.index.name = "Hora"
 
 caminho_csv_perfil = os.path.join(OUT_DIR, "perfil_vertical_picos.csv")
 tabela_perfil.round(3).to_csv(caminho_csv_perfil, sep=";", decimal=",")
-print(f"\nVariacao horaria - Picos, {H1:.0f}m x {H2:.0f}m (Lei de Hellmann, alfa={ALFA}):")
+print("\nVariacao horaria - Picos (10m x 50m NASA):")
 print(tabela_perfil.round(3))
 
 plt.figure(figsize=(9, 5))
-plt.plot(tabela_perfil.index, tabela_perfil[f"v a {H1:.0f}m [m/s]"],
-         marker="o", label=f"{H1:.0f} m (medido)")
-plt.plot(tabela_perfil.index, tabela_perfil[f"v a {H2:.0f}m [m/s]"],
-         marker="s", label=f"{H2:.0f} m (Lei de Hellmann, alfa={ALFA})")
+plt.plot(tabela_perfil.index, tabela_perfil["v a 10m (real NASA) [m/s]"],
+         marker="o", label="10 m (Real NASA)")
+plt.plot(tabela_perfil.index, tabela_perfil["v a 50m (real NASA) [m/s]"],
+         marker="s", label="50 m (Real NASA)")
 plt.xlabel("Hora do dia")
 plt.ylabel("Velocidade media do vento [m/s]")
-plt.title(f"Variacao da velocidade media horaria - Picos/PI ({H1:.0f}m x {H2:.0f}m)")
+plt.title("Variacao da velocidade media horaria - Picos/PI (10m x 50m Dados Reais)")
 plt.xticks(range(0, 24))
 plt.grid(alpha=0.3)
 plt.legend()
