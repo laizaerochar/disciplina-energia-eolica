@@ -1,0 +1,13 @@
+Localidade;Ano;Metodo;k;c_m_s;V_media_m_s;sigma_m_s;R2
+Picos;2019;Desvio_Padrao;3,0352;6,6578;5,948;2,14;
+Picos;2019;Grafico_Min_Quadrados;2,8517;6,4707;5,948;2,14;0,99292
+Picos;2019;Maxima_Verossimilhanca;3,0664;6,6516;5,948;2,14;
+Picos;2024;Desvio_Padrao;2,6797;6,4282;5,715;2,306;
+Picos;2024;Grafico_Min_Quadrados;2,3959;6,1673;5,715;2,306;0,98264
+Picos;2024;Maxima_Verossimilhanca;2,699;6,4104;5,715;2,306;
+Fortaleza;2019;Desvio_Padrao;3,7639;8,1209;7,336;2,165;
+Fortaleza;2019;Grafico_Min_Quadrados;3,7265;7,9341;7,336;2,165;0,99725
+Fortaleza;2019;Maxima_Verossimilhanca;3,9494;8,1123;7,336;2,165;
+Fortaleza;2024;Desvio_Padrao;3,837;8,216;7,43;2,154;
+Fortaleza;2024;Grafico_Min_Quadrados;3,2238;8,1783;7,43;2,154;0,97734
+Fortaleza;2024;Maxima_Verossimilhanca;3,9971;8,1988;7,43;2,154;

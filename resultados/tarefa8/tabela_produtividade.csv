@@ -1,0 +1,17 @@
+Localidade;Ano;Distribuicao;Metodo;k;c_m_s;rho_kg_m3;Densidade_Potencia_W_m2
+Fortaleza;2019;Rayleigh;N/A (usa apenas V_media);2,0;8,2778;1,1824;264,152
+Fortaleza;2019;Weibull;Desvio_Padrao;3,7639;8,1209;1,1824;174,603
+Fortaleza;2019;Weibull;Grafico_Min_Quadrados;3,7265;7,9341;1,1824;163,202
+Fortaleza;2019;Weibull;Maxima_Verossimilhanca;3,9494;8,1123;1,1824;172,306
+Fortaleza;2024;Rayleigh;N/A (usa apenas V_media);2,0;8,3839;1,1824;274,437
+Fortaleza;2024;Weibull;Desvio_Padrao;3,837;8,216;1,1824;180,05
+Fortaleza;2024;Weibull;Grafico_Min_Quadrados;3,2238;8,1783;1,1824;186,381
+Fortaleza;2024;Weibull;Maxima_Verossimilhanca;3,9971;8,1988;1,1824;177,472
+Picos;2019;Rayleigh;N/A (usa apenas V_media);2,0;6,7116;1,1304;134,604
+Picos;2019;Weibull;Desvio_Padrao;3,0352;6,6578;1,1304;98,361
+Picos;2019;Weibull;Grafico_Min_Quadrados;2,8517;6,4707;1,1304;92,837
+Picos;2019;Weibull;Maxima_Verossimilhanca;3,0664;6,6516;1,1304;97,681
+Picos;2024;Rayleigh;N/A (usa apenas V_media);2,0;6,4487;1,1304;119,397
+Picos;2024;Weibull;Desvio_Padrao;2,6797;6,4282;1,1304;93,996
+Picos;2024;Weibull;Grafico_Min_Quadrados;2,3959;6,1673;1,1304;89,123
+Picos;2024;Weibull;Maxima_Verossimilhanca;2,699;6,4104;1,1304;92,849

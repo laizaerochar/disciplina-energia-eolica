@@ -1,3 +1,7 @@
-Ano;V_media [m/s];c [m/s];k_1;k_2;k_3;n_registros
-2019;7,336;8,277;1,0;2,0;3,5;8760
-2024;7,43;8,383;1,0;2,0;3,5;8784
+Localidade;Ano;k;V_media [m/s];c_k [m/s];n_registros
+Fortaleza/CE;2019;1,0;7,336;7,3357;8760
+Fortaleza/CE;2019;2,0;7,336;8,2774;8760
+Fortaleza/CE;2019;3,5;7,336;8,1531;8760
+Fortaleza/CE;2024;1,0;7,43;7,4295;8784
+Fortaleza/CE;2024;2,0;7,43;8,3833;8784
+Fortaleza/CE;2024;3,5;7,43;8,2573;8784
