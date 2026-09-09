@@ -1,0 +1,1120 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[a4paper,top=3cm,bottom=2.5cm,left=3cm,right=2cm]{geometry}
+\usepackage[demo]{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{indentfirst}
+\usepackage{setspace}
+% CORREÇÃO 1: Removido o 'hidelinks' que entrava em conflito com colorlinks=true
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{siunitx}
+
+\newcommand{\nomeAluna}{Laiza Edwigens Rocha Silva}
+\newcommand{\matricula}{554328}
+\newcommand{\disciplina}{TE0408 -- ENERGIA EÓLICA}
+\newcommand{\professora}{Carla Freitas de Andrade}
+\newcommand{\instituicao}{Universidade Federal do Ceará -- UFC}
+\newcommand{\centroensino}{Centro de Tecnologia}
+\newcommand{\departamento}{Departamento de Engenharia Mecânica}
+\newcommand{\curso}{Curso de Engenharia de Energias Renováveis}
+
+\begin{document}
+\begin{titlepage}
+    \centering
+    % Inserção da Logo da Universidade
+    \includegraphics[width=3.5cm]{figuras/logo-ufc.png} \\
+    \vspace{0.5cm}
+
+    \textbf{\large Universidade Federal do Ceará -- UFC} \\
+    \textbf{\large Centro de Tecnologia -- CT} \\
+    \textbf{\large Departamento de Engenharia Mecânica} \\
+    \textbf{\large Curso de Engenharia de Energias Renováveis} \\
+
+    \vspace{4cm}
+
+    % Autoria
+    \textbf{\large Laiza Edwigens Rocha Silva, sob número de matrícula 554328} \\
+    \vspace{4.5cm}
+
+    % Título
+    \textbf{\Large Relatório Técnico para a disciplina de Energia Eólica} \\
+    \vspace{0.5cm}
+
+    \vfill
+
+    % Local e Data
+    \textbf{Fortaleza - CE} \\
+    \textbf{2026}
+\end{titlepage}
+
+% FOLHA DE ROSTO
+
+\begin{titlepage}
+    \centering
+
+    \textbf{\large Laiza Edwigens Rocha Silva, sob número de matrícula 554328} \\
+
+    \vspace{5cm}
+
+    \textbf{\Large Relatório Técnico para a disciplina de Energia Eólica} \\
+    \vspace{0.5cm}
+
+    \vspace{3.5cm}
+
+    \begin{flushright}
+        \begin{minipage}{0.5\textwidth}
+            \normalsize
+            Relatório apresentado à disciplina de Energia Eólica, do curso de Engenharia de Energias Renováveis da Universidade Federal do Ceará, contendo as atividades avaliativas propostas no decorrer do semestre \\
+            \vspace{0.5cm}
+
+            \textbf{Professor:} Dra. Carla Freitas de Andrade
+        \end{minipage}
+    \end{flushright}
+
+    \vfill
+
+    \textbf{Fortaleza - CE} \\
+    \textbf{2026}
+\end{titlepage}
+% SUMARIO
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+\section{Resumo}
+Este relatório apresenta o desenvolvimento das atividades avaliativas entregues ao decorrer do semestre de 2026.2 na disciplina de Energia Eólica, do curso de Engenharia de Energias Renováveis. O estudo tem como foco a caracterização do recursos eólicos por meio do processamento de dados reais, trabalhando com diferentes abordagens, como por exemplo modelagem por estipulações, em tudo estimulando o posicionamento crítico de um estudante de engenharia, uma vez que, o amontoado das atividades na disciplina tratam de situações cotidianas e reais da Engenharia de Energia Eólica.
+
+\section{Introdução}
+Atualmente, diferentes metodologias de ensino são aplicadas nas disciplinas dos cursos de engenharia, uma delas sendo uma metodologia ativa, a qual incentiva o estudante de engenharia na simulação do cotidiano de um engenheiro efetivamente formado, com isso, o presente relatório tem por intuito o armazenamento das atividades avaliativas na disciplina de Energia Eólica, as quais modelam a realidade de um especialista na área de Energia Eólica.
+Com o objetivo de propor um ambiente de entrega acadêmica mais organizado, as tarefas que compõem esse relatório serão majoritariamente acerca da estação de Picos/PI, com exceção de tarefas que solicitem mais localidades, além disso, também no intuito de padronização do relatório, todo o processamento dos dados e a geração das tabelas e gráficos serão mediante linguagem Python, e esses códigos estarão armazenados no meu github, logo após a conclusão de cada tarefa.
+\href{[https://github.com/laizaerochar/disciplina-energia-eolica](https://github.com/laizaerochar/disciplina-energia-eolica)}{Clique aqui para ir direto ao repositório}
+\subsection*{Nota sobre a fonte dos dados}
+As primeiras tarefas deste relatório (Tarefas 2, 3 e 4) foram inicialmente desenvolvidas com dados horários do Instituto Nacional de Meteorologia (INMET). Durante o processamento, identificou-se uma falha real de sensor na estação de Barreiras/BA, que comprometia a comparação entre localidades. Diante disso, a base de dados foi migrada para o \textbf{NASA POWER}, uma vez que esse banco oferece, para o mesmo ponto geográfico, séries horárias completas e sem falhas de sensor, além de disponibilizar diretamente a velocidade do vento em \textbf{duas alturas simultâneas} (10 e 50\,m) -- o que elimina a necessidade de extrapolação vertical usada na versão anterior deste relatório. Todos os resultados apresentados a partir daqui usam portanto esse banco de dados.
+
+\section{Atividades da segunda aula, do dia 12/08/2026}
+Abaixo, será apresentado os resultados e desenvolvimentos das tarefas 2, 3 e 4, as quais foram propostas na disciplina de Energia Eólica, referentes ao conteúdo da aula 2, que foi finalizada no primeiro dia de aula, 12/08/2026, as tarefas abordam três aspectos fundamentais para a caracterização das estações que usam fonte eólica:
+
+\begin{itemize}
+    \item \textbf{Tarefa 2:} cálculo da massa específica do ar em função
+    da altitude e da temperatura ambiente;
+    \item \textbf{Tarefa 3:} análise estatística da velocidade do vento --
+    variação anual (interanual), variação sazonal (mensal) e
+    variação vertical (perfil de velocidade com a altura);
+    \item \textbf{Tarefa 4:} distribuição de frequência da velocidade
+    do vento e construção de histogramas comparativos.
+\end{itemize}
+Para as tarefas 3 e 4, foram utilizados dados horários de velocidade do
+vento obtidos junto ao \textbf{NASA POWER}, referentes
+aos pontos de grade mais próximos de \textbf{Fortaleza/CE} (altitude
+\SI{21.44}{\meter}), \textbf{Barreiras/BA} (altitude
+\SI{614.95}{\meter}) e \textbf{Picos/PI} (altitude
+\SI{406.51}{\meter}), com registros horários cobrindo o período de
+20/08/2016 a 20/08/2026.
+
+Como anteriormente mencionado na introdução, a disciplina será na linguagem Python, e para essas tarefas, foi necessária as bibliotecas \texttt{pandas}, \texttt{numpy} e \texttt{matplotlib}.
+
+\newpage
+
+% 2. TAREFA 2
+
+\section{Tarefa 2 -- Massa Específica do Ar em Função da Altitude e
+da Temperatura}
+
+\subsection{Fundamentação teórica}
+A potência no vento possui uma relação direta com a massa específica do ar, como a equação abaixo apresenta:
+
+\begin{equation}
+    P = \frac{1}{2}\,\rho\, A\, v^3
+    \label{eq:potencia}
+\end{equation}
+Como a massa específica do ar é variável a depender da altitude do local e da temperatura, é necessário uma correção do valor para condições normais, por isso,
+($\rho_0 = \SI{1.225}{\kilogram\per\cubic\meter}$). Assim, a equação dessa correção, apresentada em aula, está escrita abaixo:
+
+\begin{equation}
+    \rho = \frac{353{,}4\left(1-\dfrac{z}{45271}\right)^{5{,}2624}}{273{,}15+T}
+    \label{eq:rho}
+\end{equation}
+
+em que:
+\begin{itemize}
+    \item $\rho$ = massa específica do ar [\si{\kilogram\per\cubic\meter}];
+    \item $z$ = altitude do local [\si{\meter}];
+    \item $T$ = temperatura ambiente [\si{\celsius}].
+\end{itemize}
+
+\subsection{Metodologia}
+
+Foi construída uma tabela de $\rho$ variando a altitude $z$ de
+\SI{0}{\meter} a \SI{1000}{\meter} (passo de \SI{100}{\meter}) e a
+temperatura $T$ de \SI{-5}{\celsius} a \SI{30}{\celsius} (passo de
+\SI{5}{\celsius}), reproduzindo o padrão apresentado nos slides da aula, a Tabela 2.1 do livro
+\emph{Energia Eólica} (Aldabó Lopez, 2018). Como essa tabela deriva exclusivamente da Equação~\eqref{eq:rho} (não depende de nenhum banco de dados de vento), ela permanece idêntica independentemente da fonte de dados utilizada nas demais tarefas. Além dessa convenção com a tabela do livro, a equação foi particularizada para a altitude da estação a qual será majoritariamente trabalhada no decorrer da disciplina, a estação de \textbf{Picos/PI}, agora com $z = \SI{406.51}{\meter}$ (altitude segundo a reanálise MERRA-2/NASA POWER, ver nota na introdução), obtendo-se a curva de $\rho$ em função da
+temperatura, com destaque para a condição de $T=\SI{25}{\celsius}$.
+
+\subsection{Resultados}
+
+A Tabela~\ref{tab:massa_especifica} apresenta os valores de $\rho$
+calculados por meio da Equação~\eqref{eq:rho} para o intervalo de altitudes e
+temperaturas especificado.
+
+\begin{table}[H]
+\centering
+\caption{Massa específica do ar [\si{\kilogram\per\cubic\meter}] em função
+da altitude e da temperatura}
+\label{tab:massa_especifica}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{c cccccccc}
+\toprule
+\textbf{Altitude [m]} & \textbf{-5\,°C} & \textbf{0\,°C} & \textbf{5\,°C} & \textbf{10\,°C} & \textbf{15\,°C} & \textbf{20\,°C} & \textbf{25\,°C} & \textbf{30\,°C}\\
+\midrule
+0    & 1,318 & 1,294 & 1,271 & 1,248 & 1,226 & 1,206 & 1,185 & 1,166\\
+100  & 1,303 & 1,279 & 1,256 & 1,234 & 1,212 & 1,192 & 1,172 & 1,152\\
+200  & 1,288 & 1,264 & 1,241 & 1,219 & 1,198 & 1,178 & 1,158 & 1,139\\
+300  & 1,273 & 1,249 & 1,227 & 1,205 & 1,184 & 1,164 & 1,145 & 1,126\\
+400  & 1,258 & 1,235 & 1,213 & 1,191 & 1,170 & 1,151 & 1,131 & 1,113\\
+500  & 1,243 & 1,220 & 1,198 & 1,177 & 1,157 & 1,137 & 1,118 & 1,100\\
+600  & 1,229 & 1,206 & 1,184 & 1,163 & 1,143 & 1,124 & 1,105 & 1,087\\
+700  & 1,214 & 1,192 & 1,171 & 1,150 & 1,130 & 1,111 & 1,092 & 1,074\\
+800  & 1,200 & 1,178 & 1,157 & 1,136 & 1,117 & 1,098 & 1,079 & 1,061\\
+900  & 1,186 & 1,164 & 1,143 & 1,123 & 1,103 & 1,085 & 1,066 & 1,049\\
+1000 & 1,172 & 1,150 & 1,130 & 1,110 & 1,090 & 1,072 & 1,054 & 1,036\\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\noindent Os valores da Tabela~\ref{tab:massa_especifica} reproduzem
+integralmente a Tabela 2.1 do livro \emph{Energia Eólica} (Aldabó Lopez,
+2018), validando a implementação da Equação~\eqref{eq:rho}, tendo em vista que para a realização dessa tarefa os valores seriam de toda forma estipulados, e não extraídos dos bancos de dados.
+
+Para a condição específica com a nova altitude de Picos/PI
+($z=\SI{406.51}{\meter}$) e $T=\SI{25}{\celsius}$ -- obtém-se:
+
+\begin{equation}
+    \rho_{\text{Picos}}(406{,}51\,\text{m},\,25\,^\circ\text{C}) = \SI{1.1304}{\kilogram\per\cubic\meter}
+    \label{eq:rho_picos}
+\end{equation}
+
+\noindent Esse valor difere do obtido na versão anterior deste relatório
+($\SI{1.1536}{\kilogram\per\cubic\meter}$, com $z=\SI{232.91}{\meter}$, altitude
+segundo o INMET), pois a reanálise MERRA-2 representa a elevação média de uma
+célula de grade de $0{,}5\times0{,}625$ graus (aproximadamente $55\times70$\,km)
+em torno de Picos, e não a altitude pontual da estação meteorológica de
+superfície -- por isso um valor de altitude mais elevado, e consequentemente
+uma massa específica ligeiramente menor.
+
+As Figuras~\ref{fig:tarefa2_geral} e \ref{fig:tarefa2_picos} ilustram,
+respectivamente, o comportamento geral da Equação~\eqref{eq:rho} e sua
+particularização para $z=\SI{406.51}{\meter}$ fixo, com o ponto de
+$T=\SI{25}{\celsius}$ destacado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figuras/tarefa2_grafico_geral.png}
+    \caption{Massa específica do ar em função da altitude, para diferentes
+    temperaturas (Equação~\eqref{eq:rho})}
+    \label{fig:tarefa2_geral}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuras/tarefa2_grafico_picos.png}
+    \caption{Massa específica do ar em função da temperatura para
+    $z=406{,}51$\,m (Picos/PI, altitude MERRA-2/NASA POWER)}
+    \label{fig:tarefa2_picos}
+\end{figure}
+
+
+% ============================================================================
+% 3. TAREFA 3
+% ============================================================================
+\section{Tarefa 3 -- Velocidade do Vento}
+
+\subsection{Fundamentação Teórica}
+
+A velocidade média do vento em um dado período de análise é obtida
+pela equação:
+
+\begin{equation}
+    \bar{V} = \frac{1}{n}\sum_{i=1}^{n} v_i
+    \label{eq:vmedia}
+\end{equation}
+
+em que $v_i$ é a velocidade do vento registrada em cada instante de medição
+e $n$ é o número total de registros do período considerado.
+
+\subsection{Metodologia e Tratamento dos Dados}
+
+Foram utilizados dados horários de velocidade do vento das estações
+NASA POWER (MERRA-2) de Fortaleza, Barreiras e Picos, nas variáveis
+\texttt{WS10M} (velocidade a 10\,m) e \texttt{WS50M} (velocidade a 50\,m).
+Diferentemente da base INMET utilizada anteriormente, a base NASA POWER não
+apresentou falhas de sensor nos anos completos analisados, dispensando
+qualquer interpolação de dados ausentes.
+
+\subsection{Tarefa 3.1 -- Variação da velocidade média anual}
+
+A Tabela~\ref{tab:vel_anual} e a Figura~\ref{fig:vel_anual} apresentam a
+velocidade média anual do vento a 10\,m (\texttt{WS10M}) para as três
+localidades, no período de 2016 a 2019.
+
+\begin{table}[H]
+\centering
+\caption{Velocidade média anual do vento a 10\,m [m/s] -- 2016 a 2019}
+\label{tab:vel_anual}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Ano} & \textbf{Fortaleza} & \textbf{Barreiras} & \textbf{Picos}\\
+\midrule
+2016 & 7,804 & 3,301 & 4,721\\
+2017 & 6,550 & 3,333 & 4,642\\
+2018 & 6,189 & 3,138 & 4,196\\
+2019 & 6,055 & 3,098 & 4,172\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Nota:} o ano de 2016 é \textbf{parcial} no dataset NASA
+POWER (cobre apenas de 20/08 a 31/12/2016, cerca de 133 dias), pois a série
+histórica consultada começa nessa data. Como esse recorte coincide com o
+segundo semestre -- período de ventos mais intensos no Nordeste, conforme
+mostrado na Tarefa 3.2 --, a média de 2016 tende a ser superestimada em
+relação a um ano completo, o que explica o valor visivelmente mais alto de
+Fortaleza nesse ano.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figuras/velocidade_media_anual.png}
+    \caption{Variação da velocidade média anual do vento a 10\,m --
+    Fortaleza, Barreiras e Picos (2016--2019)}
+    \label{fig:vel_anual}
+\end{figure}
+
+\noindent Observa-se que Fortaleza apresenta as maiores velocidades
+médias anuais, seguida por Picos, enquanto Barreiras apresenta os menores
+valores dentre as três localidades.
+
+\subsection{Tarefa 3.2 -- Variação Sazonal do Vento}
+
+A Tabela~\ref{tab:vel_sazonal} e a Figura~\ref{fig:vel_sazonal} apresentam a
+velocidade média mensal a 10\,m (sazonal) para as três localidades,
+considerando o mesmo período de referência (2016--2019).
+
+\begin{table}[H]
+\centering
+\caption{Velocidade média mensal do vento a 10\,m [m/s] -- 2016 a 2019}
+\label{tab:vel_sazonal}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Mês} & \textbf{Fortaleza} & \textbf{Barreiras} & \textbf{Picos}\\
+\midrule
+Jan & 5,691 & 2,654 & 3,444\\
+Fev & 4,590 & 2,405 & 2,686\\
+Mar & 4,209 & 2,262 & 2,961\\
+Abr & 4,147 & 2,633 & 3,294\\
+Mai & 5,108 & 3,117 & 4,129\\
+Jun & 6,342 & 3,933 & 5,204\\
+Jul & 6,984 & 4,187 & 5,826\\
+Ago & 7,746 & 3,870 & 5,595\\
+Set & 8,307 & 4,013 & 5,702\\
+Out & 7,990 & 3,448 & 4,934\\
+Nov & 7,679 & 2,985 & 4,329\\
+Dez & 6,519 & 2,674 & 3,760\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figuras/variacao_sazonal.png}
+    \caption{Variação sazonal (média mensal) do vento a 10\,m --
+    Fortaleza, Barreiras e Picos}
+    \label{fig:vel_sazonal}
+\end{figure}
+
+\noindent As três localidades apresentam comportamento sazonal
+semelhante, com velocidades médias mais elevadas no segundo semestre
+(agosto a novembro), período tipicamente associado à intensificação
+dos ventos no Nordeste brasileiro, e velocidades menores entre
+março e maio.
+
+\subsection{Tarefa 3.3 -- Variação da Velocidade Média Horária em
+Duas Alturas (Picos/PI)}
+
+Diferentemente da versão anterior deste relatório -- que utilizava a Lei de
+Hellmann para extrapolar verticalmente uma única altura medida pelo INMET --,
+a base NASA POWER disponibiliza \textbf{diretamente} a velocidade do vento em
+duas alturas (\texttt{WS10M} e \texttt{WS50M}), eliminando a necessidade de
+extrapolação. Assim, a Tabela~\ref{tab:perfil_vertical} e a
+Figura~\ref{fig:perfil_vertical} apresentam a velocidade média horária real
+em Picos/PI, calculada sobre os anos completos disponíveis (2017 a 2025,
+excluindo os anos parciais de 2016 e 2026).
+
+\begin{longtable}{ccc}
+\caption{Velocidade média horária real em Picos/PI -- 10\,m x 50\,m
+(NASA POWER/MERRA-2, 2017--2025)}
+\label{tab:perfil_vertical}\\
+\toprule
+\textbf{Hora} & \textbf{v a 10\,m [m/s]} & \textbf{v a 50\,m [m/s]}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Hora} & \textbf{v a 10\,m [m/s]} & \textbf{v a 50\,m [m/s]}\\
+\midrule
+\endhead
+00h & 3,802 & 6,241\\
+01h & 3,991 & 6,345\\
+02h & 4,150 & 6,433\\
+03h & 4,209 & 6,434\\
+04h & 4,169 & 6,353\\
+05h & 4,093 & 6,221\\
+06h & 5,053 & 6,602\\
+07h & 6,080 & 7,481\\
+08h & 6,078 & 7,252\\
+09h & 5,626 & 6,610\\
+10h & 5,140 & 5,995\\
+11h & 4,743 & 5,514\\
+12h & 4,455 & 5,168\\
+13h & 4,240 & 4,918\\
+14h & 4,082 & 4,750\\
+15h & 3,962 & 4,667\\
+16h & 3,755 & 4,669\\
+17h & 2,773 & 4,819\\
+18h & 2,712 & 5,359\\
+19h & 3,085 & 5,812\\
+20h & 3,341 & 6,059\\
+21h & 3,483 & 6,151\\
+22h & 3,568 & 6,170\\
+23h & 3,658 & 6,183\\
+\bottomrule
+\end{longtable}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figuras/perfil_vertical_picos.png}
+    \caption{Variação da velocidade média horária real do vento em
+    Picos/PI, para 10\,m e 50\,m de altura (NASA POWER/MERRA-2)}
+    \label{fig:perfil_vertical}
+\end{figure}
+
+\noindent O comportamento horário mudou notavelmente em relação à versão
+anterior (baseada em Hellmann): observa-se um pico pela manhã, por volta das
+7h-8h (velocidades de até 6,08\,m/s a 10\,m e 7,48\,m/s a 50\,m), e um mínimo
+relativo no início da noite, por volta das 17h-18h. Esse padrão -- distinto
+do perfil de brisa diurna com pico no início da tarde observado na versão
+anterior -- reflete a diferença metodológica entre um perfil extrapolado
+matematicamente (Hellmann) e um perfil medido/modelado diretamente pela
+reanálise MERRA-2 em ambas as alturas, reforçando a importância de utilizar
+dados reais sempre que disponíveis.
+
+% ============================================================================
+% 4. TAREFA 4
+% ============================================================================
+\section{Tarefa 4 -- Distribuição de Frequência da Velocidade do Vento}
+
+\subsection{Fundamentação teórica}
+
+A caracterização probabilística do vento pode ser feita por meio da
+distribuição de frequência da velocidade, na qual os dados são
+divididos em faixas (\emph{bins}) de \SI{1}{\meter\per\second}. Para cada
+faixa, calculam-se:
+
+\begin{itemize}
+    \item \textbf{Número, quantidade, de ocorrências:} quantidade de registros em que a velocidade se enquadra naquela faixa;
+    \item \textbf{Frequência relativa (\%):} razão entre o número de
+    ocorrências da faixa e o número total de ocorrências da amostra,
+    multiplicado por 100.
+\end{itemize}
+
+\subsection{Metodologia}
+
+Foram selecionados dois anos da estação de Picos/PI para
+comparação: \textbf{2019} e \textbf{2024}, utilizando a velocidade a
+50\,m (\texttt{WS50M}), mesma variável utilizada nas Tarefas 5 e 6 para
+consistência entre as análises.
+
+\subsection{Resultados}
+
+A Tabela~\ref{tab:distribuicao} apresenta a distribuição de
+frequência comparativa entre 2019 e 2024. A Figura~\ref{fig:histograma}
+apresenta o histograma de 2024.
+
+\begin{table}[H]
+\centering
+\caption{Distribuição de frequência da velocidade do vento a 50\,m em
+Picos/PI -- 2019 vs. 2024}
+\label{tab:distribuicao}
+\begin{tabular}{c cc cc}
+\toprule
+& \multicolumn{2}{c}{\textbf{2019}} & \multicolumn{2}{c}{\textbf{2024}}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Velocidade [m/s]} & \textbf{Ocorrências} & \textbf{Freq. (\%)} & \textbf{Ocorrências} & \textbf{Freq. (\%)}\\
+\midrule
+0--1   & 59   & 0,67  & 148  & 1,68\\
+1--2   & 228  & 2,60  & 464  & 5,28\\
+2--3   & 516  & 5,89  & 661  & 7,53\\
+3--4   & 838  & 9,57  & 945  & 10,76\\
+4--5   & 1312 & 14,98 & 1051 & 11,96\\
+5--6   & 1507 & 17,20 & 1211 & 13,79\\
+6--7   & 1406 & 16,05 & 1366 & 15,55\\
+7--8   & 1260 & 14,38 & 1451 & 16,52\\
+8--9   & 976  & 11,14 & 944  & 10,75\\
+9--10  & 462  & 5,27  & 401  & 4,57\\
+10--11 & 150  & 1,71  & 118  & 1,34\\
+11--12 & 43   & 0,49  & 23   & 0,26\\
+12--13 & 3    & 0,03  & 1    & 0,01\\
+\midrule
+\textbf{Total} & \textbf{8760} & \textbf{100,00} & \textbf{8784} & \textbf{100,00}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figuras/histograma_2024.png}
+    \caption{Histograma da distribuição de frequência da velocidade do
+    vento a 50\,m em Picos/PI (2024)}
+    \label{fig:histograma}
+\end{figure}
+
+\noindent Em relação à base INMET utilizada na versão anterior deste
+relatório (que usava a velocidade a 10\,m e apresentava moda na faixa de
+1--2\,m/s), a distribuição obtida com \texttt{WS50M}/NASA POWER é
+sensivelmente diferente: a moda se desloca para a faixa de 5--6\,m/s (2019)
+e 7--8\,m/s (2024), refletindo tanto a maior velocidade típica a 50\,m
+quanto a mudança de fonte de dados.
+
+% ============================================================================
+% 5. ATIVIDADES DA TERCEIRA AULA -- TAREFAS 5 E 6
+% ============================================================================
+\newpage
+\section{Atividades da terceira aula, do dia 14/08/2026}
+
+As Tarefas 5 e 6, apresentadas a seguir, referem-se ao conteúdo da Aula 3
+da disciplina, sobre a caracterização probabilística do recurso eólico por
+meio da \textbf{distribuição de Weibull}.
+
+\section{Tarefa 5 -- Distribuição de Weibull (Picos/PI)}
+
+\subsection{Fundamentação teórica}
+
+A distribuição da velocidade do vento pode ser representada por uma função
+de densidade de probabilidade $f(v)$. A função mais utilizada para esse
+fim é a \textbf{distribuição de Weibull}, dada por:
+
+\begin{equation}
+    f(v) = \frac{k}{c}\left(\frac{v}{c}\right)^{k-1} e^{-(v/c)^k}
+    \label{eq:weibull}
+\end{equation}
+
+em que:
+\begin{itemize}
+    \item $v$ = velocidade do vento [m/s];
+    \item $c$ = fator de escala [m/s], relacionado à velocidade média do local;
+    \item $k$ = fator de forma [adimensional], relacionado à dispersão da
+    velocidade em torno da média.
+\end{itemize}
+
+A distribuição de Weibull é, na verdade, uma família de curvas: variando
+apenas $k$ (com $c$ fixo), ela reproduz distribuições estatísticas
+clássicas diferentes. Conforme apresentado em aula, três valores de $k$ são
+particularmente relevantes:
+
+\begin{itemize}
+    \item $k = 1{,}0$ -- Distribuição Exponencial;
+    \item $k = 2{,}0$ -- Distribuição de Rayleigh;
+    \item $k = 3{,}5$ -- aproxima-se de uma Distribuição Normal.
+\end{itemize}
+
+O fator de escala $c$ foi estimado a partir da velocidade média medida
+($\bar{V}$, Equação~\eqref{eq:vmedia}), utilizando a relação de Rayleigh
+($k=2$), amplamente empregada quando não se dispõe de um ajuste estatístico
+completo (por máxima verossimilhança) aos dados:
+
+\begin{equation}
+    c = \frac{\bar{V}}{\Gamma(1{,}5)}
+    \label{eq:c_rayleigh}
+\end{equation}
+
+em que $\Gamma(\cdot)$ é a função gama, e $\Gamma(1{,}5) = \sqrt{\pi}/2
+\approx 0{,}8862$.
+
+\subsection{Metodologia}
+
+Para a estação de Picos/PI, nos anos de 2019 e 2024 (mesmos anos e mesma
+variável, \texttt{WS50M}, utilizados na Tarefa 4), calculou-se a velocidade
+média $\bar{V}$ e o respectivo fator de escala $c$ pela
+Equação~\eqref{eq:c_rayleigh}. Com esse $c$ fixo, foram traçadas as três
+curvas de Weibull (Equação~\eqref{eq:weibull}) para $k=1{,}0$, $k=2{,}0$ e
+$k=3{,}5$, sobrepostas ao histograma real dos dados medidos.
+
+\subsection{Resultados}
+
+A Tabela~\ref{tab:weibull_picos} apresenta os parâmetros calculados para a localidade. As figuras contendo o arranjo dos gráficos para 2019 e 2024 estão dispostas ao fim desta seção.
+
+\begin{table}[H]
+\centering
+\caption{Parâmetros da distribuição de Weibull -- Picos/PI}
+\label{tab:weibull_picos}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Ano} & $\bar{V}$ \textbf{[m/s]} & $c$ \textbf{[m/s]} & \textbf{Valores de $k$ testados}\\
+\midrule
+2019 & 5,948 & 6,712 & 1,0\ /\ 2,0\ /\ 3,5\\
+2024 & 5,715 & 6,449 & 1,0\ /\ 2,0\ /\ 3,5\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_picos_2019_k1.0.png}
+        \caption{$k=1,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_picos_2019_k2.0.png}
+        \caption{$k=2,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_picos_2019_k3.5.png}
+        \caption{$k=3,5$}
+    \end{subfigure}
+    \caption{Curvas de Weibull -- Picos/PI (2019)}
+    \label{fig:weibull_picos_2019}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_picos_2024_k1.0.png}
+        \caption{$k=1,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_picos_2024_k2.0.png}
+        \caption{$k=2,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_picos_2024_k3.5.png}
+        \caption{$k=3,5$}
+    \end{subfigure}
+    \caption{Curvas de Weibull -- Picos/PI (2024)}
+    \label{fig:weibull_picos_2024}
+\end{figure}
+
+\section{Tarefa 6 -- Distribuição de Weibull (Fortaleza/CE)}
+
+\subsection{Metodologia}
+
+Repetindo a metodologia da Tarefa 5 (Equações~\eqref{eq:weibull} e
+\eqref{eq:c_rayleigh}), porém para a estação de \textbf{Fortaleza/CE}, nos
+mesmos anos de 2019 e 2024 e com os mesmos três valores de $k$, permitindo
+uma comparação direta entre as duas localidades.
+
+\subsection{Resultados e Análise Crítica}
+
+A Tabela~\ref{tab:weibull_fortaleza} apresenta os parâmetros calculados.
+
+\begin{table}[H]
+\centering
+\caption{Parâmetros da distribuição de Weibull -- Fortaleza/CE}
+\label{tab:weibull_fortaleza}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Ano} & $\bar{V}$ \textbf{[m/s]} & $c$ \textbf{[m/s]} & \textbf{Valores de $k$ testados}\\
+\midrule
+2019 & 7,336 & 8,277 & 1,0\ /\ 2,0\ /\ 3,5\\
+2024 & 7,430 & 8,383 & 1,0\ /\ 2,0\ /\ 3,5\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_fortaleza_2019_k1.0.png}
+        \caption{$k=1,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_fortaleza_2019_k2.0.png}
+        \caption{$k=2,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_fortaleza_2019_k3.5.png}
+        \caption{$k=3,5$}
+    \end{subfigure}
+    \caption{Curvas de Weibull -- Fortaleza/CE (2019)}
+    \label{fig:weibull_fortaleza_2019}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_fortaleza_2024_k1.0.png}
+        \caption{$k=1,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_fortaleza_2024_k2.0.png}
+        \caption{$k=2,0$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \includegraphics[width=\textwidth]{figuras/weibull_fortaleza_2024_k3.5.png}
+        \caption{$k=3,5$}
+    \end{subfigure}
+    \caption{Curvas de Weibull -- Fortaleza/CE (2024)}
+    \label{fig:weibull_fortaleza_2024}
+\end{figure}
+
+As plotagens das curvas de Weibull sobre os histogramas reais (Figuras \ref{fig:weibull_picos_2019} a \ref{fig:weibull_fortaleza_2024}) revelam um comportamento estatístico contraintuitivo, porém comum no Nordeste do Brasil. Historicamente, a literatura eólica adota a distribuição de Rayleigh ($k=2,0$) como padrão universal na ausência de dados. Contudo, as figuras demonstram visualmente que a curva com $k=3,5$ (que se aproxima de uma distribuição Normal) possui um ajuste muito mais fiel à realidade das medições, tanto em Picos quanto em Fortaleza, para ambos os anos. Fisicamente, um fator de forma $k$ elevado ($3,5$) indica que os ventos locais possuem pouca dispersão, ou seja, sopram a maior parte do tempo muito próximos à velocidade média. Essa constância é um atributo de excelência para parques eólicos, pois garante uma geração de energia mais estável, previsível e com menos fadiga mecânica para os aerogeradores.
+
+% 7. TAREFA 7
+
+\newpage
+\section{Tarefa 7 -- Estimação dos Parâmetros de Weibull por Diferentes Métodos}
+
+\subsection{Fundamentação Teórica}
+A estimativa precisa do potencial eólico depende da correta determinação dos parâmetros de forma ($k$) e escala ($c$) da distribuição de Weibull. Conforme a literatura da área, existem diversos métodos numéricos e analíticos para realizar esse ajuste, cada um com diferentes níveis de complexidade e precisão. Nesta tarefa, foram aplicados três métodos distintos para encontrar os pares ($k, c$):
+
+\begin{enumerate}
+    \item \textbf{Método do Desvio Padrão:} Utiliza a média e o desvio padrão da série de dados, relacionando-os por meio da função Gama.
+    \item \textbf{Método Gráfico (Mínimos Quadrados):} Aplica uma transformação logarítmica dupla na função de distribuição acumulada, linearizando a equação para extrair $k$ e $c$ a partir da inclinação e da interseção da reta ajustada.
+    \item \textbf{Método da Máxima Verossimilhança:} Uma abordagem iterativa e robusta que busca os parâmetros que maximizam a probabilidade de a curva teórica representar a série de dados observada.
+\end{enumerate}
+
+\subsection{Metodologia}
+Os três métodos foram aplicados às séries temporais de Fortaleza/CE e Picos/PI para os anos de 2019 e 2024 (dados da velocidade a 50\,m da base NASA POWER). Os parâmetros obtidos foram utilizados para traçar três curvas de Weibull concorrentes, sobrepostas ao histograma real de cada local e ano.
+
+\subsection{Resultados e Análise Crítica}
+
+A Tabela~\ref{tab:parametros_metodos} compila os parâmetros $k$ e $c$ extraídos diretamente dos gráficos plotados para cada método.
+
+\begin{table}[H]
+\centering
+\caption{Parâmetros de Weibull ($k$ e $c$) obtidos pelos três métodos}
+\label{tab:parametros_metodos}
+\begin{tabular}{ll ccc}
+\toprule
+\textbf{Localidade} & \textbf{Ano} & \textbf{Desvio Padrão} & \textbf{Método Gráfico} & \textbf{Máxima Verossimilhança} \\
+\midrule
+\multirow{2}{*}{Fortaleza/CE} & 2019 & $k=3{,}76$, $c=8{,}12$ & $k=3{,}73$, $c=7{,}93$ & $k=3{,}95$, $c=8{,}11$ \\
+                              & 2024 & $k=3{,}84$, $c=8{,}22$ & $k=3{,}22$, $c=8{,}18$ & $k=4{,}00$, $c=8{,}20$ \\
+\midrule
+\multirow{2}{*}{Picos/PI}     & 2019 & $k=3{,}04$, $c=6{,}66$ & $k=2{,}85$, $c=6{,}47$ & $k=3{,}07$, $c=6{,}65$ \\
+                              & 2024 & $k=2{,}68$, $c=6{,}43$ & $k=2{,}40$, $c=6{,}17$ & $k=2{,}70$, $c=6{,}41$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As Figuras~\ref{fig:comparacao_fortaleza} e \ref{fig:comparacao_picos} ilustram o ajuste visual das curvas produzidas por cada método em relação aos dados medidos.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/comparacao_metodos_fortaleza_2019.png}
+        \caption{Fortaleza - 2019}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/comparacao_metodos_fortaleza_2024.png}
+        \caption{Fortaleza - 2024}
+    \end{subfigure}
+    \caption{Comparação dos métodos de ajuste para Fortaleza/CE}
+    \label{fig:comparacao_fortaleza}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/comparacao_metodos_picos_2019.png}
+        \caption{Picos - 2019}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/comparacao_metodos_picos_2024.png}
+        \caption{Picos - 2024}
+    \end{subfigure}
+    \caption{Comparação dos métodos de ajuste para Picos/PI}
+    \label{fig:comparacao_picos}
+\end{figure}
+
+Analisando os gráficos e a tabela, nota-se que todos os métodos resultaram em fatores de forma ($k$) elevados (entre $2{,}40$ e $4{,}00$), distanciando-se consideravelmente do padrão assumido de Rayleigh ($k=2{,}0$). O Método da Máxima Verossimilhança (linha azul) e o Método do Desvio Padrão (linha vermelha) produziram resultados notavelmente próximos. Entretanto, o método da Máxima Verossimilhança capturou de forma mais fiel o pico exato (moda) do histograma na maioria dos casos. O Método Gráfico (linha verde), por depender de uma regressão linear sobre dados transformados logaritmicamente, apresentou a maior divergência, tendendo a subestimar o fator $k$ e ``alargar'' sutilmente a curva. Do ponto de vista da engenharia de precisão, a robustez analítica do método da Máxima Verossimilhança o torna a escolha mais confiável para estudos de viabilidade.
+
+
+% 8. TAREFA 8
+
+\newpage
+\section{Tarefa 8 -- Estimativa da Produtividade de Energia}
+
+\subsection{Fundamentação Teórica}
+A estimativa da produção de energia de uma turbina eólica em um determinado local pode ser realizada a partir do cruzamento da curva de potência da máquina com a distribuição de probabilidade do regime de ventos.
+
+Para uma máquina idealizada, operando com limite de Betz ($C_{p,Betz} = 16/27$) e eficiência máxima ($\eta=1$), a densidade de potência média esperada ($P/A$, em $\text{W/m}^2$), assumindo uma \textbf{distribuição de Rayleigh}, é obtida resolvendo a integral da densidade de probabilidade. A expressão analítica consolidada resulta em:
+\begin{equation}
+    \frac{P_{w,Rayleigh}}{A} = \frac{1}{2} \rho V_c^3 \left(\frac{16}{27}\right) \left(\frac{3}{4}\right)\sqrt{\pi}
+    \label{eq:pot_rayleigh}
+\end{equation}
+em que $V_c$ é a velocidade característica do vento, relacionada à média por $V_c = \frac{2\bar{V}}{\sqrt{\pi}}$.
+
+Para o cálculo utilizando a \textbf{distribuição de Weibull} de forma mais realista e com os parâmetros medidos do local, a densidade de potência média decorre do terceiro momento estatístico da velocidade do vento, $E[V^3]$, ponderado pela função densidade de probabilidade de Weibull. Para essa distribuição, esse momento possui solução analítica fechada em termos da função Gama:
+\begin{equation}
+    E[V^3] = c^3\,\Gamma\!\left(1+\frac{3}{k}\right)
+\end{equation}
+de modo que a densidade de potência média resulta em:
+\begin{equation}
+    \frac{P_{w,Weibull}}{A} = \frac{1}{2}\,\rho\,\left(\frac{16}{27}\right)\,c^3\,\Gamma\!\left(1+\frac{3}{k}\right)
+    \label{eq:pot_weibull}
+\end{equation}
+em que $c$ e $k$ são os parâmetros de Weibull oriundos dos diferentes métodos de ajuste estatístico (Tarefa 7). Note-se que a Equação~\eqref{eq:pot_weibull} é a generalização direta da Equação~\eqref{eq:pot_rayleigh}: fazendo $k=2$ (caso particular de Rayleigh, $c=V_c$), tem-se $\Gamma(1+3/2)=\Gamma(2{,}5)=(3/4)\sqrt{\pi}$, recuperando-se exatamente a Equação~\eqref{eq:pot_rayleigh}. Isso confirma a consistência entre as duas formulações e foi verificado numericamente antes da elaboração deste relatório.
+
+\subsection{Metodologia}
+Conforme os requisitos da tarefa, calculou-se a densidade de potência média para as estações de Picos/PI e Fortaleza/CE (2019 e 2024), utilizando a massa específica do ar $\rho$ obtida na Tarefa 2 para a altitude de cada localidade. O cálculo comparou a formulação analítica ideal de Rayleigh (Equação~\eqref{eq:pot_rayleigh}) com a formulação de Weibull (Equação~\eqref{eq:pot_weibull}). Esta última foi calculada três vezes, sendo alimentada pelos pares de parâmetros ($c, k$) provenientes dos três métodos abordados na Tarefa 7 (Desvio Padrão, Gráfico e Máxima Verossimilhança).
+
+\subsection{Resultados e Análise Crítica}
+
+A Tabela~\ref{tab:produtividade} resume os valores numéricos de densidade de potência extraídos das formulações. As Figuras \ref{fig:prod_fortaleza} e \ref{fig:prod_picos} apresentam os resultados comparativos em formato de gráficos de barras.
+
+% CORREÇÃO 2: A quantidade de colunas no tabular deve corresponder às usadas (6 colunas em vez de 8)
+\begin{table}[H]
+\centering
+\caption{Estimativa de Densidade de Potência Média ($\text{W/m}^2$) -- Picos e Fortaleza}
+\label{tab:produtividade}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cc cccc}
+\toprule
+\multirow{2}{*}{\textbf{Localidade}} & \multirow{2}{*}{\textbf{Ano}} & \textbf{Dist. de Rayleigh} & \multicolumn{3}{c}{\textbf{Distribuição de Weibull (Idealizada)}} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-6}
+& & \textbf{Padrão Teórico} & \textbf{Desvio Padrão} & \textbf{Método Gráfico} & \textbf{Max. Verossimilhança} \\
+\midrule
+\multirow{2}{*}{Fortaleza/CE} & 2019 & 264 & 175 & 163 & 172 \\
+                              & 2024 & 274 & 180 & 186 & 177 \\
+\midrule
+\multirow{2}{*}{Picos/PI}     & 2019 & 135 & 98  & 93  & 98 \\
+                              & 2024 & 119 & 94  & 89  & 93 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/produtividade_fortaleza_2019.png}
+        \caption{Fortaleza - 2019}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/produtividade_fortaleza_2024.png}
+        \caption{Fortaleza - 2024}
+    \end{subfigure}
+    \caption{Densidade de potência média estimada para Fortaleza/CE}
+    \label{fig:prod_fortaleza}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/produtividade_picos_2019.png}
+        \caption{Picos - 2019}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \includegraphics[width=\textwidth]{figuras/produtividade_picos_2024.png}
+        \caption{Picos - 2024}
+    \end{subfigure}
+    \caption{Densidade de potência média estimada para Picos/PI}
+    \label{fig:prod_picos}
+\end{figure}
+
+A análise dos resultados evidencia uma discrepância colossal no dimensionamento energético gerada pela escolha do modelo probabilístico. A abordagem idealizada de Rayleigh superestima grosseiramente a densidade de potência do vento em todas as situações analisadas -- chegando a prever $274 \text{ W/m}^2$ contra cerca de $180 \text{ W/m}^2$ das modelagens de Weibull em Fortaleza (2024), um erro superior a $50\%$.
+
+Isso ocorre matematicamente porque a distribuição de Rayleigh engessa o fator de forma em $k=2{,}0$, forçando uma curva achatada e de cauda grossa que concentra maior probabilidade em velocidades muito altas (onde a relação v³ explode o cálculo da potência). No entanto, como comprovado pela Tarefa 7, a realidade medida aponta para ventos muito mais concentrados em torno da média, com pouca variância ($k$ subindo para a faixa de $3{,}0$ a $4{,}0$).
+
+Os três métodos estatísticos baseados em Weibull geraram estimativas de produtividade consistentes e bem mais conservadoras. As pequenas variações que ocorrem entre eles (por exemplo, 172 vs 175 $\text{W/m}^2$ em Fortaleza 2019) reforçam que a escolha criteriosa do método matemático de ajuste (Máxima Verossimilhança vs. Desvio Padrão) define a precisão da estimativa de receita, impactando não apenas os aspectos operacionais, mas toda a viabilidade econômico-financeira de um projeto eólico.
+
+% CONCLUSAO
+
+\section{Conclusão}
+
+O desenvolvimento do relatório comprova a metodologia que será aplicada no decorrer de toda a disciplina, assim, as tarefas 2 a 6 permitiram a aplicação prática dos conceitos fundamentais da caracterização do recurso eólico apresentados em aula. Na tarefa 2, verificou-se que a massa específica do
+ar decresce com o aumento da altitude e da temperatura, impactando
+diretamente a potência disponível no vento. Na tarefa 3, a análise dos
+dados horários da NASA POWER evidenciou tanto a variação sazonal
+típica do regime de ventos do Nordeste (máximos entre agosto e novembro)
+quanto o perfil vertical real do vento em duas alturas, sem a necessidade de
+extrapolação matemática antes exigida pela base INMET. A tarefa 4 mostrou
+que a distribuição de frequência da velocidade do vento em Picos/PI
+apresenta formato assimétrico, compatível com o comportamento estatístico
+esperado para dados de vento. Por fim, as tarefas 5 e 6 aplicaram
+formalmente a distribuição de Weibull sobre os dados reais de Picos e
+Fortaleza, mostrando que, para ambas as localidades e ambos os anos
+analisados, um fator de forma $k$ mais próximo de $3{,}5$ (e não o valor de
+Rayleigh, $k=2{,}0$, classicamente adotado como padrão) melhor representa o
+comportamento observado dos ventos.
+De maneira geral, o trabalho evidencia claramente a importância da análise crítica da qualidade e da origem dos dados meteorológicos antes de sua utilização: a migração da base INMET para a NASA POWER, motivada pela identificação de uma falha real de sensor na estação de Barreiras/BA, não apenas resolveu esse problema, como também eliminou a necessidade de extrapolação vertical (Lei de Hellmann), evidenciando como a escolha da fonte de dados pode alterar substancialmente tanto a metodologia quanto os resultados de um estudo de caracterização eólica.
+
+% 9. ATIVIDADES DA SETIMA AULA -- TAREFA 12
+
+\newpage
+\section{Atividades da sétima aula}
+
+A Tarefa 12, apresentada a seguir, refere-se ao conteúdo da Aula 7 da
+disciplina, sobre a estimativa da produção de energia de um aerogerador
+por meio do cruzamento entre a estatística de vento do local e a curva
+de potência real de um aerogerador.
+
+\section{Tarefa 12 -- Energia Anual Gerada (EAG)}
+
+\subsection{Fundamentação Teórica}
+
+A produção de energia de um aerogerador pode ser estimada cruzando-se a
+frequência de ocorrência de cada velocidade do vento no local com a
+potência que o aerogerador produz naquela mesma velocidade, conforme a
+curva de potência fornecida pelo fabricante (folha de dados). Para cada
+velocidade $v$, calcula-se o produto $f(v)\cdot P(v)$, em que:
+
+\begin{itemize}
+    \item $f(v)$ = frequência de ocorrência da velocidade do vento $v$ [\%];
+    \item $P(v)$ = potência produzida pelo aerogerador na velocidade $v$ [kW].
+\end{itemize}
+
+Somando esse produto para todas as velocidades e considerando que um
+ano possui 8760 horas, obtém-se a \textbf{Energia Anual Gerada (EAG)}:
+
+\begin{equation}
+    EAG = \sum_v \left[f(v)\cdot P(v)\right] \cdot 8760
+    \label{eq:eag}
+\end{equation}
+
+em que $EAG$ é dada em kWh/ano.
+
+A partir da EAG, é possível calcular o \textbf{fator de capacidade}
+$F_c$ do aerogerador no local, que relaciona a energia efetivamente
+gerada com a energia que seria gerada caso o aerogerador operasse
+continuamente em sua potência nominal $P_{nominal}$ durante todo o ano:
+
+\begin{equation}
+    F_c = \frac{EAG}{8760\cdot P_{nominal}}
+    \label{eq:fc}
+\end{equation}
+
+\subsection{Metodologia}
+
+\subsubsection{Aerogerador utilizado}
+
+Diferentemente das Tarefas 5 a 8, que utilizavam curvas de potência
+idealizadas (limite de Betz), esta tarefa exige o uso da curva de
+potência \textbf{real}, tal como fornecida em folha de dados de
+fabricante -- ou seja, uma tabela discreta de potência por velocidade,
+obtida por ensaio de campo, e não uma formulação teórica.
+
+Foi utilizada a curva de potência de uma turbina de classe 1,5\,MW,
+publicada na Tabela 13-3/Figura 13-14 do livro-texto \emph{Renewable and
+Efficient Electric Power Systems} (MASTERS, 2013), amplamente adotado em
+cursos de energia renovável. Essa escolha se deve à necessidade de usar
+valores de potência efetivamente publicados por uma fonte confiável, em
+vez de valores estimados ou lembrados de memória, o que poderia
+introduzir erros de transcrição. A Tabela~\ref{tab:curva_potencia}
+apresenta a curva de potência utilizada, e a Figura~\ref{fig:curva_potencia}
+a ilustra graficamente.
+
+\begin{table}[H]
+\centering
+\caption{Curva de potência do aerogerador utilizado (turbina classe 1,5\,MW, dados de fabricante -- MASTERS, 2013)}
+\label{tab:curva_potencia}
+\begin{tabular}{cc}
+\toprule
+\textbf{Velocidade do vento [m/s]} & \textbf{Potência [kW]} \\
+\midrule
+0 -- 2 (abaixo do cut-in) & 0 \\
+3  & 14 \\
+4  & 60 \\
+5  & 155 \\
+6  & 269 \\
+7  & 420 \\
+8  & 625 \\
+9  & 900 \\
+10 & 1195 \\
+11 & 1395 \\
+12 & 1485 \\
+13 -- 20 (patamar nominal) & 1500 \\
+$\geq$ 21 (cut-out) & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuras/curva_potencia_turbina_1500kW.png}
+    \caption{Curva de potência real (datasheet) da turbina de 1500\,kW utilizada}
+    \label{fig:curva_potencia}
+\end{figure}
+
+\subsubsection{Localidades, anos e dado de vento}
+
+Conforme solicitado, a tabela foi construída para \textbf{duas
+localidades} (Picos/PI e Fortaleza/CE, mesmas localidades trabalhadas
+nas Tarefas 5 a 8) e \textbf{dois anos diferentes} (2019 e 2024),
+utilizando a velocidade do vento a 50\,m (\texttt{WS50M}, NASA POWER),
+mesma variável já utilizada nas tarefas anteriores. Cada observação
+horária de velocidade foi arredondada para o inteiro mais próximo (em
+m/s), reproduzindo o formato de tabela apresentado em aula, e a
+frequência de ocorrência de cada velocidade inteira foi calculada como
+a razão entre o número de horas naquela velocidade e o total de horas
+válidas do ano.
+
+\subsection{Resultados}
+
+A Tabela~\ref{tab:eag_picos_2019} apresenta a tabela completa para
+Picos/PI em 2019, a título de exemplo -- as tabelas completas das
+demais três combinações (Picos 2024, Fortaleza 2019 e Fortaleza 2024)
+seguem a mesma estrutura e estão disponíveis no repositório do projeto.
+A Tabela~\ref{tab:resumo_eag} consolida a EAG e o fator de capacidade
+das quatro combinações.
+
+\begin{table}[H]
+\centering
+\caption{Tabela de energia anual gerada -- Picos/PI (2019)}
+\label{tab:eag_picos_2019}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Velocidade [m/s]} & \textbf{Frequência (\%)} & \textbf{Potência [kW]} & \textbf{$f(v)\cdot P(v)$} \\
+\midrule
+0  & 0,103  & 0    & 0,000 \\
+1  & 1,541  & 0    & 0,000 \\
+2  & 4,349  & 0    & 0,000 \\
+3  & 7,671  & 14   & 1,074 \\
+4  & 11,861 & 60   & 7,117 \\
+5  & 17,158 & 155  & 26,595 \\
+6  & 16,507 & 269  & 44,404 \\
+7  & 14,897 & 420  & 62,567 \\
+8  & 13,642 & 625  & 85,263 \\
+9  & 7,888  & 900  & 70,992 \\
+10 & 3,322  & 1195 & 39,698 \\
+11 & 0,845  & 1395 & 11,788 \\
+12 & 0,217  & 1485 & 3,222 \\
+\midrule
+\textbf{Total} & \textbf{100,001} & & \textbf{352,719} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Aplicando a Equação~\eqref{eq:eag}: $EAG = 352{,}719 \times 8760 = 3.089.820{,}81$ kWh/ano.
+
+\begin{table}[H]
+\centering
+\caption{Resumo da Energia Anual Gerada (EAG) e do fator de capacidade -- turbina de 1500\,kW}
+\label{tab:resumo_eag}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Localidade} & \textbf{Ano} & $\sum f(v)P(v)$ \textbf{[kW]} & \textbf{EAG [kWh/ano]} & $F_c$ \textbf{[\%]} \\
+\midrule
+\multirow{2}{*}{Picos/PI}     & 2019 & 352,719 & 3.089.820,81 & 23,51 \\
+                               & 2024 & 333,304 & 2.919.742,08 & 22,22 \\
+\midrule
+\multirow{2}{*}{Fortaleza/CE} & 2019 & 589,819 & 5.166.816,19 & 39,32 \\
+                               & 2024 & 605,142 & 5.301.046,29 & 40,34 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As Figuras~\ref{fig:eag_picos_2019}, \ref{fig:eag_picos_2024},
+\ref{fig:eag_fortaleza_2019} e \ref{fig:eag_fortaleza_2024} ilustram,
+para cada combination, a distribuição de frequência do vento sobreposta
+à curva de potência real do aerogerador.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuras/distribuicao_x_potencia_picos_2019.png}
+    \caption{Distribuição de frequência x curva de potência -- Picos/PI (2019)}
+    \label{fig:eag_picos_2019}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuras/distribuicao_x_potencia_picos_2024.png}
+    \caption{Distribuição de frequência x curva de potência -- Picos/PI (2024)}
+    \label{fig:eag_picos_2024}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuras/distribuicao_x_potencia_fortaleza_2019.png}
+    \caption{Distribuição de frequência x curva de potência -- Fortaleza/CE (2019)}
+    \label{fig:eag_fortaleza_2019}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuras/distribuicao_x_potencia_fortaleza_2024.png}
+    \caption{Distribuição de frequência x curva de potência -- Fortaleza/CE (2024)}
+    \label{fig:eag_fortaleza_2024}
+\end{figure}
+
+\subsection{Análise Crítica}
+
+Os resultados confirmam, com uma turbina de fabricante real, a mesma
+tendência observada nas Tarefas 5 a 8 com abordagens teóricas: Fortaleza
+gera consideravelmente mais energia que Picos -- entre 67\% e 82\% a
+mais de EAG, dependendo do ano --, refletindo a maior velocidade média
+do vento na estação costeira. O fator de capacidade de Fortaleza
+($\approx$ 39--40\%) é compatível com o de parques eólicos de boa
+qualidade no litoral do Nordeste brasileiro, enquanto o de Picos
+($\approx$ 22--24\%), embora mais modesto, ainda representa um
+aproveitamento tecnicamente viável do recurso eólico local.
+
+Observa-se também, na Tabela~\ref{tab:eag_picos_2019}, que a maior
+contribuição individual para a EAG não ocorre nem na velocidade mais
+frequente (5\,m/s, com 17,16\% do tempo) nem na velocidade de maior
+potência de pico (12\,m/s, com 1485\,kW), mas sim em 8\,m/s -- ponto de
+equilíbrio entre frequência de ocorrência ainda alta e potência já
+consideravelmente elevada. Esse comportamento -- também observado nas
+quatro combinações analisadas -- ilustra por que a simples velocidade
+média do vento não é suficiente para dimensionar a produção energética
+de um parque eólico, sendo indispensável o cruzamento completo entre a
+distribuição estatística do vento e a curva de potência real do
+aerogerador escolhido.
+
+% ============================================================================
+% REFERENCIAS
+% ============================================================================
+\section*{Referências Bibliográficas}
+\addcontentsline{toc}{section}{Referências Bibliográficas}
+
+\begin{enumerate}
+    \item ALDABÓ LOPEZ, Ricardo. \emph{Energia Eólica}. São Paulo:
+    Artliber, 2018.
+
+    \item CUSTÓDIO, Ronaldo dos Santos. \emph{Energia Eólica para
+    Produção de Energia Elétrica}. 2. ed. Rio de Janeiro: Synergia,
+    2013.
+
+    \item NASA LANGLEY RESEARCH CENTER (LARC) POWER PROJECT. \emph{NASA
+    POWER -- Prediction of Worldwide Energy Resources}. Disponível em:
+    \url{[https://power.larc.nasa.gov/](https://power.larc.nasa.gov/)}.
+
+    \item INSTITUTO NACIONAL DE METEOROLOGIA (INMET). \emph{Estações Automáticas}. Disponível em:
+    \url{[https://bdmep.inmet.gov.br/](https://bdmep.inmet.gov.br/)}.
+\end{enumerate}
+
+\end{document}
