@@ -1,0 +1,13 @@
+Localidade;Ano;Metodo;k;c_m_s;V_media_m_s;Soma_fv_Pv_kW;EAG_kWh_ano;Fc_%
+Picos;2019;Desvio_Padrao;3,0352;6,6578;5,948;350,252;3068210,55;23,35
+Picos;2019;Grafico_Min_Quadrados;2,8517;6,4707;5,948;328,994;2881991,58;21,93
+Picos;2019;Maxima_Verossimilhanca;3,0664;6,6516;5,948;348,438;3052315,33;23,23
+Picos;2024;Desvio_Padrao;2,6797;6,4282;5,715;329,463;2886095,93;21,96
+Picos;2024;Grafico_Min_Quadrados;2,3959;6,1673;5,715;306,96;2688965,81;20,46
+Picos;2024;Maxima_Verossimilhanca;2,699;6,4104;5,715;326,193;2857453,32;21,75
+Fortaleza;2019;Desvio_Padrao;3,7639;8,1209;7,336;578,5;5067656,68;38,57
+Fortaleza;2019;Grafico_Min_Quadrados;3,7265;7,9341;7,336;545,737;4780657,41;36,38
+Fortaleza;2019;Maxima_Verossimilhanca;3,9494;8,1123;7,336;576,869;5053370,89;38,46
+Fortaleza;2024;Desvio_Padrao;3,837;8,216;7,43;595,383;5215556,84;39,69
+Fortaleza;2024;Grafico_Min_Quadrados;3,2238;8,1783;7,43;588,227;5152867,57;39,22
+Fortaleza;2024;Maxima_Verossimilhanca;3,9971;8,1988;7,43;592,514;5190425,02;39,5
